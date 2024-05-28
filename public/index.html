@@ -15,9 +15,16 @@
         <input type="text" id="destinationFolder" name="destinationFolder" required>
         <br><br>
         <button type="submit">Start Watching</button>
+        <button type="button" id="stopButton">Stop Watching</button>
     </form>
     <div id="status"></div>
+    <div id="latestImageContainer">
+        <h2>Latest Image Added:</h2>
+        <img id="latestImage" src="" alt="No image yet" style="max-width: 100%; height: auto;">
+    </div>
     <script>
+        let ws;
+        
         document.getElementById('folderForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const sourceFolder = document.getElementById('sourceFolder').value;
@@ -33,12 +40,48 @@
             .then(response => response.text())
             .then(data => {
                 document.getElementById('status').textContent = data;
+                if (ws) {
+                    ws.close();
+                }
+                setupWebSocket();
             })
             .catch(error => {
                 console.error('Error:', error);
                 document.getElementById('status').textContent = 'Error starting the watcher.';
             });
         });
+
+        document.getElementById('stopButton').addEventListener('click', function() {
+            fetch('/stop', {
+                method: 'POST',
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('status').textContent = data;
+                if (ws) {
+                    ws.close();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('status').textContent = 'Error stopping the watcher.';
+            });
+        });
+
+        function setupWebSocket() {
+            ws = new WebSocket(`ws://${location.host}`);
+
+            ws.onmessage = function(event) {
+                const imagePath = event.data;
+                const img = document.getElementById('latestImage');
+                img.src = imagePath + `?t=${new Date().getTime()}`;
+                img.alt = "Latest image";
+            };
+
+            ws.onclose = function() {
+                console.log('WebSocket connection closed');
+            };
+        }
     </script>
 </body>
 </html>
