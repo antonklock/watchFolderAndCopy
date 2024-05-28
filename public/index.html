@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch and Move App</title>
+</head>
+<body>
+    <h1>Watch and Move App</h1>
+    <form id="folderForm">
+        <label for="sourceFolder">Source Folder:</label>
+        <input type="text" id="sourceFolder" name="sourceFolder" required>
+        <br><br>
+        <label for="destinationFolder">Destination Folder:</label>
+        <input type="text" id="destinationFolder" name="destinationFolder" required>
+        <br><br>
+        <button type="submit">Start Watching</button>
+    </form>
+    <div id="status"></div>
+    <script>
+        document.getElementById('folderForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const sourceFolder = document.getElementById('sourceFolder').value;
+            const destinationFolder = document.getElementById('destinationFolder').value;
+
+            fetch('/start', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ sourceFolder, destinationFolder }),
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('status').textContent = data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('status').textContent = 'Error starting the watcher.';
+            });
+        });
+    </script>
+</body>
+</html>
