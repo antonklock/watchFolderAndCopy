@@ -4,23 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watch and Move App</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <h1>Watch and Move App</h1>
-    <form id="folderForm">
-        <label for="sourceFolder">Source Folder:</label>
-        <input type="text" id="sourceFolder" name="sourceFolder" required>
-        <br><br>
-        <label for="destinationFolder">Destination Folder:</label>
-        <input type="text" id="destinationFolder" name="destinationFolder" required>
-        <br><br>
-        <button type="submit">Start Watching</button>
-        <button type="button" id="stopButton">Stop Watching</button>
-    </form>
-    <div id="status"></div>
-    <div id="latestImageContainer">
-        <h2>Latest Image Added:</h2>
-        <img id="latestImage" src="" alt="No image yet" style="max-width: 100%; height: auto;">
+    <h1>Watch folder and move images</h1>
+    <div class="main">
+        <div class="form">
+            <div class="inputForm">
+                <h2>Folder to watch</h2>
+                <form id="folderForm">
+                <div class="input">
+                    <label for="sourceFolder">Source folder path:</label>
+                    <input type="text" id="sourceFolder" name="sourceFolder" required>
+                </div>
+                <br><br>
+                <div class="input">
+                    <label for="destinationFolder">Destination folder path:</label>
+                    <input type="text" id="destinationFolder" name="destinationFolder" required>
+                </div>
+                <br><br>
+                <div class="watchButtons">
+                    <button type="submit">Start Watching</button>
+                    <button type="button" id="stopButton">Stop Watching</button>
+                </div>
+                </form>
+                <div id="status"></div>
+            </div>
+
+        </div>
+       
+        <div class="preview">
+            <div id="latestImageContainer">
+                <h2>Latest Image Added:</h2>
+                <img id="latestImage" src="" alt="No image yet">
+            </div>
+        </div>
     </div>
     <script>
         let ws;
@@ -39,7 +57,10 @@
             })
             .then(response => response.text())
             .then(data => {
-                document.getElementById('status').textContent = data;
+                const statusElement = document.getElementById('status');
+                statusElement.textContent = 'Watching folder...';
+                statusElement.classList.add('active');
+                statusElement.classList.remove('inactive');
                 if (ws) {
                     ws.close();
                 }
@@ -57,7 +78,10 @@
             })
             .then(response => response.text())
             .then(data => {
-                document.getElementById('status').textContent = data;
+                const statusElement = document.getElementById('status');
+                statusElement.textContent = 'Watching stopped.';
+                statusElement.classList.add('inactive');
+                statusElement.classList.remove('active');
                 if (ws) {
                     ws.close();
                 }

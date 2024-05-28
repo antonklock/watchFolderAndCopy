@@ -31,7 +31,7 @@ app.post('/start', (req, res) => {
     app.use('/Source', express.static(path.join(sourceFolder, 'Source')));
 
     watchAndMove(sourceFolder, destinationFolder);
-    res.send(`Watching started on ${sourceFolder} and copying to ${destinationFolder}`);
+    res.send(`Watching folders...`);
 });
 
 app.post('/stop', (req, res) => {
